@@ -16,7 +16,7 @@ from src.utils.utils import save_obj
 class DataTransormationConfig:
     preprocess_path=os.path.join("preprocess","preprocess.pkl")
 
-class DataTransormation:
+class DataTransformation:
     def __init__(self):
         self.data_transformation_config=DataTransormationConfig() 
 
