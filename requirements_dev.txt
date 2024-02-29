@@ -1,0 +1,19 @@
+pandas
+numpy
+pytest
+ipykernel
+pymongo
+scikit-learn
+seaborn
+ydata-profiling
+matplotlib
+Flask
+mlflow
+dvc
+# requirements_dev
+
+black
+flake8
+mypy
+
+-e .
