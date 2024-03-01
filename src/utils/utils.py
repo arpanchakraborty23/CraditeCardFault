@@ -27,7 +27,7 @@ def load_obj(file_path):
         logging.info('load obj started')
 
         with open(file_path,'rb') as f:
-            pickle.load(file_path)
+            pickle.load(f)
 
         logging.info('pickl file loaded')
     except Exception as e:

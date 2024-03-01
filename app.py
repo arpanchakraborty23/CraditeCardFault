@@ -1,4 +1,4 @@
-from flask import Flask,request,render_template,jsonify
+from flask import Flask, render_template, request
 import sys
 import pandas as pd
 
@@ -13,10 +13,11 @@ def home():
     return render_template('index.html')
 
 
-@app.route("/predict",methods=["GET","POST"])
+@app.route("/predict", methods=["GET", "POST"])
 def predict_datapoint():
     try:
-        if request.method=="GET":
+        logging.info('pradict data point')
+        if request.method == "GET":
             return render_template('form.html')
         
         else:
@@ -27,12 +28,14 @@ def predict_datapoint():
                 PAY_4=request.form.get('PAY_4'),  
                 PAY_5=request.form.get('PAY_5'), 
                 PAY_6=request.form.get('PAY_6'),  
+
                 BILL_AMT1=request.form.get(' BILL_AMT1'), 
                 BILL_AMT2=request.form.get(' BILL_AMT2'),   
                 BILL_AMT3=request.form.get(' BILL_AMT3'),   
                 BILL_AMT4=request.form.get(' BILL_AMT4'),   
                 BILL_AMT5=request.form.get(' BILL_AMT5'),   
-                BILL_AMT6=request.form.get(' BILL_AMT6'),   
+                BILL_AMT6=request.form.get(' BILL_AMT6'),
+
                 PAY_AMT1=request.form.get('PAY_AMT1'),   
                 PAY_AMT2=request.form.get('PAY_AMT2'),
                 PAY_AMT3=request.form.get('PAY_AMT3'),
@@ -51,9 +54,9 @@ def predict_datapoint():
             return render_template('result.html',final_result=result)
         
     except Exception as e:
-        logging.info('error in pradict app')
+        logging.info(f"An error occurred: {str(e)}")
         raise CustomException(e,sys)
 
 
-if __name__=="__main__":
-    app.run(port=5000)
+if __name__ == "__main__":
+    app.run(debug=True)
