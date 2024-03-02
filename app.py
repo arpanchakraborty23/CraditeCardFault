@@ -1,62 +1,38 @@
-from flask import Flask, render_template, request
-import sys
-import pandas as pd
-
-from src.pipline.pradiction_pipline import PradictPipline,CustomData
-from src.logger import logging
+from flask import Flask,render_template,request,send_file,jsonify
 from src.exception import CustomException
+from src.logger import logging
+from src.pipline.bulk_pradiction import PredictionPipeline
 
-app=Flask(__name__)
+import sys
 
-@app.route('/')
+app= Flask(__name__)
+
+@app.route("/")
 def home():
     return render_template('index.html')
 
-
-@app.route("/predict", methods=["GET", "POST"])
-def predict_datapoint():
+@app.route('/predict', methods=['POST', 'GET'])
+def upload():
     try:
-        logging.info('pradict data point')
-        if request.method == "GET":
-            return render_template('form.html')
-        
+        logging.info('prediction started')
+        if request.method=='POST':
+            prediction_pipeline = PredictionPipeline()
+
+
+            prediction_file_detail= prediction_pipeline.run_pipline()
+
+            logging.info('Prediction Completed Download file')
+
+            return send_file(prediction_file_detail.prediction_file_path,download_name=prediction_file_detail.prediction_file_name,as_attachment=True)
+
+
+
         else:
-            data=CustomData(
-                PAY_0=request.form.get('PAY_0'),
-                PAY_2=request.form.get('PAY_2'),  
-                PAY_3=request.form.get('PAY_3'),  
-                PAY_4=request.form.get('PAY_4'),  
-                PAY_5=request.form.get('PAY_5'), 
-                PAY_6=request.form.get('PAY_6'),  
+            return render_template('upload_file.html')
 
-                BILL_AMT1=request.form.get(' BILL_AMT1'), 
-                BILL_AMT2=request.form.get(' BILL_AMT2'),   
-                BILL_AMT3=request.form.get(' BILL_AMT3'),   
-                BILL_AMT4=request.form.get(' BILL_AMT4'),   
-                BILL_AMT5=request.form.get(' BILL_AMT5'),   
-                BILL_AMT6=request.form.get(' BILL_AMT6'),
-
-                PAY_AMT1=request.form.get('PAY_AMT1'),   
-                PAY_AMT2=request.form.get('PAY_AMT2'),
-                PAY_AMT3=request.form.get('PAY_AMT3'),
-                PAY_AMT4=request.form.get('PAY_AMT4'),
-                PAY_AMT5=request.form.get('PAY_AMT5'),
-                PAY_AMT6=request.form.get('PAY_AMT6')
-            )
-            
-            final_data=data.get_data_as_dataframe()
-            pred=prediction_pipline=PradictPipline()
-
-            prediction_pipline.predict(final_data)
-
-            result=round(pred[0],2)
-
-            return render_template('result.html',final_result=result)
-        
     except Exception as e:
-        logging.info(f"An error occurred: {str(e)}")
-        raise CustomException(e,sys)
+        logging.info(f'error in bulk app prediction {str(e)}')
+        raise CustomException(sys,e) from e 
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__=="__main__":
+    app.run(debug=True,port=5000)

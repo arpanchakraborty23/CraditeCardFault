@@ -24,10 +24,8 @@ def save_obj(file_path,obj):
 
 def load_obj(file_path):
     try:
-        logging.info('load obj started')
-
-        with open(file_path,'rb') as f:
-            pickle.load(f)
+        with open(file_path,'rb') as file_obj:
+            return pickle.load(file_obj)
 
         logging.info('pickl file loaded')
     except Exception as e:
