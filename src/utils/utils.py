@@ -83,3 +83,16 @@ def Hyperparameters_Tuning(x_train, y_train, x_test, y_test,classifiers):
         logging.info('Error in Tuning')
         raise CustomException(sys,e)              
 
+def data_collection(database:str,collection:str,csv:str):
+   
+    uri = ""
+    client=MongoClient(uri)
+
+    database=client[database]
+    collection=database[collection]
+
+    df=pd.read_csv(csv)
+    data_records = df.to_dict(orient='records')
+
+    # Insert the data into MongoDB
+    collection.insert_many(data_records)

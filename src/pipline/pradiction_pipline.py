@@ -6,7 +6,7 @@ import pandas as pd
 from src.logger import logging
 from src.exception import CustomException
 from flask import request
-from src.utils.utils import load_obj
+from src.utils.utils import load_obj,data_collection
 
 from dataclasses import dataclass
 
@@ -35,6 +35,8 @@ class PredictionPipeline:
             
             input_csv_file.save(pred_file_path)
 
+            # data_collection(database='CRADITECARD',collection='input_csv',csv=pred_file_path)
+
             return pred_file_path
 
 
@@ -62,27 +64,31 @@ class PredictionPipeline:
 
     def get_predicted_dataframe(self, input_dataframe_path:pd.DataFrame):
         try:
-            Target_column='default payment next month'
+            
             input_dataframe=pd.read_csv(input_dataframe_path)
-
+            
+            Target_column='default payment next month'
             drop_column='Unnamed: 0'
             # input_dataframe=input_dataframe.drop(drop_column)
 
             input_dataframe = input_dataframe.drop(columns=[drop_column,Target_column ],axis=1) if drop_column in input_dataframe.columns else input_dataframe
 
-
+            # pradiction 
             prediction=self.predict(input_dataframe)
             input_dataframe[Target_column]=[pred for pred in prediction]
+
 
             target_col_map={0:'bad',1:'goood'}
 
             input_dataframe[Target_column]=input_dataframe[Target_column].map(target_col_map)
 
+
+            # saving pradiction col as csv
             os.makedirs(self.pradiction_pipline_config.prediction_output_dirname,exist_ok=True)
 
             input_dataframe.to_csv(self.pradiction_pipline_config.prediction_file_path,index=False)
 
-
+            
             logging.info("predictions completed. ")
 
         except Exception as e:

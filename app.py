@@ -1,7 +1,7 @@
 from flask import Flask,render_template,request,send_file,jsonify
 from src.exception import CustomException
 from src.logger import logging
-from src.pipline.bulk_pradiction import PredictionPipeline
+from src.pipline.pradiction_pipline import PredictionPipeline
 
 import sys
 
@@ -23,7 +23,9 @@ def upload():
 
             logging.info('Prediction Completed Download file')
 
-            return send_file(prediction_file_detail.prediction_file_path,download_name=prediction_file_detail.prediction_file_name,as_attachment=True)
+            return send_file(prediction_file_detail.prediction_file_path,
+                download_name=prediction_file_detail.prediction_file_name,
+                as_attachment=True)
 
 
 
